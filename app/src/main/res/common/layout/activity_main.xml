@@ -17,6 +17,7 @@
         android:textStyle="bold" />
 
     <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp2_split"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
