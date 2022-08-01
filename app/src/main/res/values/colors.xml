@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="my_primary_purple">#FF453566</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_gray">#FF353535</color>
+    <color name="purple_level_base">#FFC9BCE6</color>
+    <color name="purple_level_1">#FFB3A7CC</color>
+    <color name="purple_level_2">#FF9A90B0</color>
+    <color name="text_level_base_header1">#FF383312</color>
+    <color name="text_level_base_header2">#FF443934</color>
+    <color name="text_level_base">#FF595466</color>
+    <color name="text_level_1">#FFF0F0F0</color>
+    <color name="text_level_2">#FFE8E8E8</color>
+    <color name="icon_tint_purple">#FF7350E0</color>
+    <color name="purple_tint">#5C7350E0</color>
+    <color name="button_tint">#FF441F4A</color>
+    <color name="button_background">#FF453566</color>
+    <color name="alert_dialog_background">#FFD6C0D7</color>
+    <color name="bottomNavView_background">#FF9D7AEA</color>
+    <color name="bottomNavView_iconActive">#FF453566</color>
+    <color name="bottomNavView_iconInactive">#FFC9BCE6</color>
+    <color name="cardView_divider_background">#33441F4A</color>
+    <color name="custom_dialog_shade">#55000000</color>
+</resources>
