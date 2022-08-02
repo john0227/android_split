@@ -31,7 +31,8 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/spinner_background" />
+                    android:background="@drawable/spinner_background"
+                    android:popupBackground="@color/alert_dialog_background" />
 
                 <Spinner
                     android:id="@+id/sp_rcver"
@@ -39,7 +40,8 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/spinner_background" />
+                    android:background="@drawable/spinner_background"
+                    android:popupBackground="@color/alert_dialog_background" />
             </LinearLayout>
 
             <LinearLayout
