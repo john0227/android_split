@@ -17,7 +17,7 @@ public class Logic {
      * Last row at i-th column is the total amount of money the i-th receiver must receive
      * Last column at i-th row is the total amount of money the i-th sender must send
 	 */
-	private int[][] transferTable;
+	private double[][] transferTable;
 
 	private Logic() {
 		this.numPeople = 0;
@@ -34,10 +34,10 @@ public class Logic {
 		this.nameToIndex.put("A", Integer.MAX_VALUE);
 		
 		// Create transferTable
-		this.transferTable = new int[this.numPeople + 1][this.numPeople + 1];
+		this.transferTable = new double[this.numPeople + 1][this.numPeople + 1];
 	}
 
-	public void addTransfer(String sender, String rcver, int amount, boolean replace)
+	public void addTransfer(String sender, String rcver, double amount, boolean replace)
 			throws IllegalArgumentException {
 		// If #addPeople(String[]) method was not called
 		if (this.transferTable == null) {
@@ -151,15 +151,15 @@ public class Logic {
 	public void printTable() {
 		int longest = Integer.MIN_VALUE;
 		int length;
-		for (int[] transfers : this.transferTable) {
-			for (int transfer : transfers) {
+		for (double[] transfers : this.transferTable) {
+			for (double transfer : transfers) {
 				length = String.valueOf(transfer).length();
 				longest = Math.max(longest, length + 1);
 			}
 		}
 
-		for (int[] transfers : this.transferTable) {
-			for (int transfer : transfers) {
+		for (double[] transfers : this.transferTable) {
+			for (double transfer : transfers) {
 				System.out.printf("%" + longest + "s", transfer);
 			}
 			System.out.println();
@@ -171,15 +171,15 @@ public class Logic {
 		return integer != null ? integer : -1;
 	}
 
-	private void setAmount(int senderIndex, int rcverIndex, int amount, boolean replace) {
-		int amountToSet = this.transferTable[senderIndex][rcverIndex];
+	private void setAmount(int senderIndex, int rcverIndex, double amount, boolean replace) {
+		double amountToSet = this.transferTable[senderIndex][rcverIndex];
 		this.transferTable[senderIndex][rcverIndex] = replace ? amount : amount + amountToSet;
 		// Update the total amount of money to send/rcv
-		int totalAmountSend = this.transferTable[senderIndex][this.numPeople];
+		double totalAmountSend = this.transferTable[senderIndex][this.numPeople];
 		this.transferTable[senderIndex][this.numPeople] = replace
 				? totalAmountSend + (amount - amountToSet)
 				: totalAmountSend + amount;
-		int totalAmountRcv = this.transferTable[this.numPeople][rcverIndex];
+		double totalAmountRcv = this.transferTable[this.numPeople][rcverIndex];
 		this.transferTable[this.numPeople][rcverIndex] = replace
 				? totalAmountRcv + (amount - amountToSet)
 				: totalAmountRcv + amount;
@@ -187,7 +187,7 @@ public class Logic {
 
 	private int countTransfers(int senderIndex) {
 		int numTransfers = 0;
-		for (int transfer : this.transferTable[senderIndex]) {
+		for (double transfer : this.transferTable[senderIndex]) {
 			numTransfers = transfer == 0 ? numTransfers : numTransfers + 1;
 		}
 		return numTransfers;
