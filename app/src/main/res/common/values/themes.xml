@@ -18,4 +18,8 @@
         <item name="android:itemBackground">@color/purple_level_2</item>
         <item name="android:buttonTint">@color/button_tint</item>
     </style>
+    <!-- Button background color -->
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorPrimary">@color/purple_level_2</item>
+    </style>
 </resources>
