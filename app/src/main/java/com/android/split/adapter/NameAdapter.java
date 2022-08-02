@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.split.R;
 import com.android.split.listener.TextChangedListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
@@ -21,9 +20,9 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
     private final Activity activity;
     private final List<String> names;
 
-    public NameAdapter(Activity activity) {
+    public NameAdapter(Activity activity, List<String> names) {
         this.activity = activity;
-        this.names = new ArrayList<>();
+        this.names = names;
     }
 
     @NonNull
@@ -43,7 +42,7 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
         // Remove name if ImageButton is pressed
         holder.ibtn_delete_name.setOnClickListener(view -> {
             this.names.remove(position);
-            NameAdapter.this.notifyItemRemoved(position);
+            this.notifyItemRemoved(position);
         });
     }
 
@@ -55,10 +54,6 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
     public void addName() {
         this.names.add("");
         this.notifyItemInserted(this.names.size() - 1);
-    }
-
-    public List<String> getNames() {
-        return this.names;
     }
 
     public static class NameHolder extends RecyclerView.ViewHolder {

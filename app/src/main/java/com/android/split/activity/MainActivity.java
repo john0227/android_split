@@ -15,6 +15,10 @@ import com.android.split.fragment.NameFragment;
 import com.android.split.fragment.ResultFragment;
 import com.android.split.fragment.TransactionFragment;
 import com.android.split.logic.Logic;
+import com.android.split.vo.TransactionMemberVo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private MyPagerAdapter pagerAdapter;
     private Logic logic;
 
+    private List<String> names;
+    private List<TransactionMemberVo> transactions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        this.names = new ArrayList<>();
+        this.transactions = new ArrayList<>();
+
         this.vp2_split = findViewById(R.id.vp2_split);
         this.btn_back = findViewById(R.id.btn_back);
         this.btn_next = findViewById(R.id.btn_next);
@@ -55,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 null
         };
 
-        this.nameFragment = new NameFragment();
-        this.transactionFragment = new TransactionFragment();
+        this.nameFragment = new NameFragment(this.names);
+        this.transactionFragment = new TransactionFragment(this.names, this.transactions);
         this.resultFragment = new ResultFragment();
         this.fragments = new Fragment[] {
                 this.nameFragment,
@@ -93,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final View.OnClickListener nextListener1 = view -> {
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
-        this.logic.addPeople(this.nameFragment.getNames());
+        this.logic.addPeople(this.names);
     };
 
     private final View.OnClickListener nextListener2 = view -> {

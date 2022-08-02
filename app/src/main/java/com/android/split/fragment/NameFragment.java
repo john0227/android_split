@@ -26,11 +26,16 @@ public class NameFragment extends Fragment {
 
     private View rootLayout;
     private RecyclerView rv_names;
-    private Button btn_add;
+    private Button btn_add_name;
 
     private NameAdapter nameAdapter;
 
+    private final List<String> names;
     private boolean isAttached;
+
+    public NameFragment(List<String> names) {
+        this.names = names;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -59,8 +64,8 @@ public class NameFragment extends Fragment {
 
     private void init() {
         this.rv_names = this.rootLayout.findViewById(R.id.rv_names);
-        this.btn_add = this.rootLayout.findViewById(R.id.btn_add);
-        this.nameAdapter = new NameAdapter(this.activity);
+        this.btn_add_name = this.rootLayout.findViewById(R.id.btn_add_name);
+        this.nameAdapter = new NameAdapter(this.activity, this.names);
     }
 
     private void setting() {
@@ -70,11 +75,7 @@ public class NameFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.rv_names.setLayoutManager(layoutManager);
 
-        this.btn_add.setOnClickListener(view -> NameFragment.this.nameAdapter.addName());
-    }
-
-    public List<String> getNames() {
-        return this.nameAdapter.getNames();
+        this.btn_add_name.setOnClickListener(view -> NameFragment.this.nameAdapter.addName());
     }
 
 }

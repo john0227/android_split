@@ -47,7 +47,7 @@ public class Logic {
 		int senderIndex = this.getNameIndex(sender);
 		int rcverIndex = this.getNameIndex(rcver);
 		if (senderIndex == -1 || rcverIndex == -1 || (senderIndex == Integer.MAX_VALUE && rcverIndex == Integer.MAX_VALUE)) {
-			throw new IllegalArgumentException(String.format("Invalid name: %s, %s, %d", sender, rcver, amount));
+			throw new IllegalArgumentException(String.format("Invalid name: %s, %s, %f", sender, rcver, amount));
 		}
 
 		if (senderIndex == Integer.MAX_VALUE) {
@@ -195,7 +195,7 @@ public class Logic {
 
 	public static Logic create() {
 		if (logic == null) {
-			return new Logic();
+			logic = new Logic();
 		}
 		return logic;
 	}
