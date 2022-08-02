@@ -18,6 +18,7 @@ import com.android.split.R;
 import com.android.split.listener.TextChangedListener;
 import com.android.split.vo.TransactionMemberVo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.TransactionHolder> {
@@ -43,8 +44,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     @Override
     public void onBindViewHolder(@NonNull TransactionHolder holder, int position) {
         // Populate spinners
-        this.populateSpinner(activity, holder.sp_sender, names);
-        this.populateSpinner(activity, holder.sp_rcver, names);
+        this.populateSpinner(activity, holder.sp_sender);
+        this.populateSpinner(activity, holder.sp_rcver);
         // Set listeners to spinners
         holder.sp_sender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -92,7 +93,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         this.notifyItemInserted(this.transactions.size() - 1);
     }
 
-    private void populateSpinner(Activity activity, Spinner spinner, List<String> items) {
+    private void populateSpinner(Activity activity, Spinner spinner) {
+        List<String> items = new ArrayList<>(this.names);
+        items.add("Everyone");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
