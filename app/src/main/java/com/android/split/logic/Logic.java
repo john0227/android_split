@@ -1,5 +1,7 @@
 package com.android.split.logic;
 
+import com.android.split.util.DecimalFormatUtil;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +149,23 @@ public class Logic {
 		numTransfers[0] = this.transferTable[senderIndex][auxilliary] == 0 ? numTransfers[0] - 1 : numTransfers[0];
 	}
 
+	public int getLongest() {
+		int longest = Integer.MIN_VALUE;
+		for (double[] transfers : this.transferTable) {
+			for (double transfer : transfers) {
+				longest = Math.max(longest, DecimalFormatUtil.format(transfer).length());
+			}
+		}
+		for (String name : this.nameToIndex.keySet()) {
+			longest = Math.max(longest, name.length());
+		}
+		return longest;
+	}
+
+	public double[][] getTransferTable() {
+		return this.transferTable;
+	}
+
 	// For testing purposes
 	public void printTable() {
 		int longest = Integer.MIN_VALUE;
@@ -193,7 +212,7 @@ public class Logic {
 		return numTransfers;
 	}
 
-	public static Logic create() {
+	public static Logic getInstance() {
 		if (logic == null) {
 			logic = new Logic();
 		}

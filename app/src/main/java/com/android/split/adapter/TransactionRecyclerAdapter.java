@@ -43,6 +43,10 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
     @Override
     public void onBindViewHolder(@NonNull TransactionHolder holder, int position) {
+        if (position == this.transactions.size() - 1) {
+            holder.et_amount.requestFocus();
+        }
+
         // Populate spinners
         this.populateSpinner(activity, holder.sp_sender);
         this.populateSpinner(activity, holder.sp_rcver);
@@ -68,9 +72,11 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.sp_rcver.setSelection(1);
         // Set listener to EditText
         TextChangedListener textChangedListener = new TextChangedListener();
-        textChangedListener.setOnTextChangedListener(
-                editable -> this.transactions.get(holder.getAdapterPosition()).setAmount(Double.parseDouble(editable.toString()))
-        );
+        textChangedListener.setOnTextChangedListener(editable -> {
+            String strAmount = editable.toString();
+            double amount = strAmount.isEmpty() ? 0 : Double.parseDouble(strAmount);
+            this.transactions.get(holder.getAdapterPosition()).setAmount(amount);
+        });
         holder.et_amount.addTextChangedListener(textChangedListener);
         // Set listener to CheckBox
         holder.cb_replace_amount.setOnCheckedChangeListener(
@@ -78,7 +84,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         );
         // Set listener to ImageButton
         holder.ibtn_delete_transaction.setOnClickListener(view -> {
-            this.names.remove(holder.getAdapterPosition());
+            this.transactions.remove(holder.getAdapterPosition());
             this.notifyItemRemoved(holder.getAdapterPosition());
         });
     }

@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.nameFragment = new NameFragment(this.names);
         this.transactionFragment = new TransactionFragment(this.names, this.transactions);
-        this.resultFragment = new ResultFragment();
+        this.resultFragment = new ResultFragment(this.names, this.transactions);
         this.fragments = new Fragment[] {
                 this.nameFragment,
                 this.transactionFragment,
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         this.pagerAdapter = new MyPagerAdapter(this, this.fragments);
-        this.logic = Logic.create();
+        this.logic = Logic.getInstance();
     }
 
     private void setting() {
@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
+        this.resultFragment.onLoad();
     };
 
 }
