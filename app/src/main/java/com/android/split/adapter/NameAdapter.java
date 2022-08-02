@@ -44,8 +44,8 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
         holder.et_name.addTextChangedListener(textChangedListener);
         // Remove name if ImageButton is pressed
         holder.ibtn_delete_name.setOnClickListener(view -> {
-            this.names.remove(position);
-            this.notifyItemRemoved(position);
+            this.names.remove(holder.getAdapterPosition());
+            this.notifyItemRemoved(holder.getAdapterPosition());
         });
     }
 

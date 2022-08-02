@@ -68,17 +68,17 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         // Set listener to EditText
         TextChangedListener textChangedListener = new TextChangedListener();
         textChangedListener.setOnTextChangedListener(
-                editable -> this.transactions.get(position).setAmount(Double.parseDouble(editable.toString()))
+                editable -> this.transactions.get(holder.getAdapterPosition()).setAmount(Double.parseDouble(editable.toString()))
         );
         holder.et_amount.addTextChangedListener(textChangedListener);
         // Set listener to CheckBox
         holder.cb_replace_amount.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> this.transactions.get(position).setReplace(isChecked)
+                (buttonView, isChecked) -> this.transactions.get(holder.getAdapterPosition()).setReplace(isChecked)
         );
         // Set listener to ImageButton
         holder.ibtn_delete_transaction.setOnClickListener(view -> {
-            this.names.remove(position);
-            this.notifyItemRemoved(position);
+            this.names.remove(holder.getAdapterPosition());
+            this.notifyItemRemoved(holder.getAdapterPosition());
         });
     }
 
