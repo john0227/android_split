@@ -31,7 +31,7 @@ public class Logic {
 		for (int i = 0; i < this.numPeople; i++) {
 			this.nameToIndex.put(names.get(i), i);
 		}
-		this.nameToIndex.put("A", Integer.MAX_VALUE);
+		this.nameToIndex.put("Everyone", Integer.MAX_VALUE);
 		
 		// Create transferTable
 		this.transferTable = new double[this.numPeople + 1][this.numPeople + 1];

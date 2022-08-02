@@ -129,8 +129,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
         this.logic.addPeople(this.names);
+        this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
     };
 
     private final View.OnClickListener nextListener2 = view -> {
@@ -139,6 +139,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        try {
+            for (TransactionMemberVo transaction : this.transactions) {
+                this.logic.addTransfer(transaction.getSender(), transaction.getRcver(), transaction.getAmount(), transaction.shouldReplace());
+            }
+        } catch (Exception e) {
+            WarningDialog.show(this, "Something went wrong", "Please try again", "Ok");
+            return;
+        }
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
     };
 
