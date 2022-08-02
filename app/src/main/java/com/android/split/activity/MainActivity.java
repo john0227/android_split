@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.android.library.log.LogService;
 import com.android.split.R;
 import com.android.split.adapter.MyPagerAdapter;
+import com.android.split.dialog.WarningDialog;
 import com.android.split.fragment.NameFragment;
 import com.android.split.fragment.ResultFragment;
 import com.android.split.fragment.TransactionFragment;
@@ -18,7 +19,9 @@ import com.android.split.logic.Logic;
 import com.android.split.vo.TransactionMemberVo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -101,12 +104,41 @@ public class MainActivity extends AppCompatActivity {
         button.setEnabled(enabled);
     }
 
+    private boolean areAllUniqueNames() {
+        Set<String> nameSet = new HashSet<>(this.names);
+        return nameSet.size() == this.names.size();
+    }
+
+    private boolean areAllValidTransactions() {
+        for (TransactionMemberVo transaction : this.transactions) {
+            if (transaction.getSender().equals(transaction.getRcver())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private final View.OnClickListener nextListener1 = view -> {
+        if (this.names.size() < 2) {
+            WarningDialog.show(this, "Need more people", "There must be at least two people", "Fix");
+            return;
+        }
+
+        if (!areAllUniqueNames()) {
+            WarningDialog.show(this, "Names are not unique", "All names must be different", "Fix");
+            return;
+        }
+
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
         this.logic.addPeople(this.names);
     };
 
     private final View.OnClickListener nextListener2 = view -> {
+        if (!areAllValidTransactions()) {
+            WarningDialog.show(this, "Invalid transactions", "Sender and receiver must be different", "Fix");
+            return;
+        }
+
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
     };
 
