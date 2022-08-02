@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.library.log.LogService;
 import com.android.split.R;
-import com.android.split.adapter.NameAdapter;
+import com.android.split.adapter.NameRecyclerAdapter;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class NameFragment extends Fragment {
     private RecyclerView rv_names;
     private Button btn_add_name;
 
-    private NameAdapter nameAdapter;
+    private NameRecyclerAdapter nameRecyclerAdapter;
 
     private final List<String> names;
     private boolean isAttached;
@@ -65,17 +65,17 @@ public class NameFragment extends Fragment {
     private void init() {
         this.rv_names = this.rootLayout.findViewById(R.id.rv_names);
         this.btn_add_name = this.rootLayout.findViewById(R.id.btn_add_name);
-        this.nameAdapter = new NameAdapter(this.activity, this.names);
+        this.nameRecyclerAdapter = new NameRecyclerAdapter(this.activity, this.names);
     }
 
     private void setting() {
-        this.rv_names.setAdapter(this.nameAdapter);
-        this.nameAdapter.addName();
+        this.rv_names.setAdapter(this.nameRecyclerAdapter);
+        this.nameRecyclerAdapter.addName();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.activity);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.rv_names.setLayoutManager(layoutManager);
 
-        this.btn_add_name.setOnClickListener(view -> NameFragment.this.nameAdapter.addName());
+        this.btn_add_name.setOnClickListener(view -> NameFragment.this.nameRecyclerAdapter.addName());
     }
 
 }

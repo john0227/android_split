@@ -15,12 +15,12 @@ import com.android.split.listener.TextChangedListener;
 
 import java.util.List;
 
-public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
+public class NameRecyclerAdapter extends RecyclerView.Adapter<NameRecyclerAdapter.NameHolder> {
 
     private final Activity activity;
     private final List<String> names;
 
-    public NameAdapter(Activity activity, List<String> names) {
+    public NameRecyclerAdapter(Activity activity, List<String> names) {
         this.activity = activity;
         this.names = names;
     }
