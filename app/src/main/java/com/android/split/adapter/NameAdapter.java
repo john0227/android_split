@@ -57,6 +57,10 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
         this.notifyItemInserted(this.names.size() - 1);
     }
 
+    public List<String> getNames() {
+        return this.names;
+    }
+
     public static class NameHolder extends RecyclerView.ViewHolder {
 
         private final EditText et_name;

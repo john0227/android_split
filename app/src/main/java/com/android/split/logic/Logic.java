@@ -1,6 +1,7 @@
 package com.android.split.logic;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Logic {
@@ -8,7 +9,7 @@ public class Logic {
 	private static Logic logic;
 
 	private int numPeople;
-	private final Map<String, Integer> nameToIndex;
+	private Map<String, Integer> nameToIndex;
 	/*
      * Rows represent senders
      * Columns represent receivers
@@ -20,15 +21,15 @@ public class Logic {
 
 	private Logic() {
 		this.numPeople = 0;
-		this.nameToIndex = new HashMap<>();
 	}
 
-	public void addPeople(String[] names) {
-		this.numPeople = names.length;
+	public void addPeople(List<String> names) {
+		this.numPeople = names.size();
 
 		// Add people and their index
+		this.nameToIndex = new HashMap<>();
 		for (int i = 0; i < this.numPeople; i++) {
-			this.nameToIndex.put(names[i], i);
+			this.nameToIndex.put(names.get(i), i);
 		}
 		this.nameToIndex.put("A", Integer.MAX_VALUE);
 		

@@ -18,6 +18,8 @@ import com.android.library.log.LogService;
 import com.android.split.R;
 import com.android.split.adapter.NameAdapter;
 
+import java.util.List;
+
 public class NameFragment extends Fragment {
 
     private Activity activity;
@@ -69,6 +71,10 @@ public class NameFragment extends Fragment {
         this.rv_names.setLayoutManager(layoutManager);
 
         this.btn_add.setOnClickListener(view -> NameFragment.this.nameAdapter.addName());
+    }
+
+    public List<String> getNames() {
+        return this.nameAdapter.getNames();
     }
 
 }
