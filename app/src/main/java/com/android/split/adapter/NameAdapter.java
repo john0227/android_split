@@ -35,6 +35,9 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull NameHolder holder, int position) {
+        if (position == this.names.size() - 1) {
+            holder.et_name.requestFocus();
+        }
         // Update name if EditText field is changed
         TextChangedListener textChangedListener = new TextChangedListener();
         textChangedListener.setOnTextChangedListener(editable -> this.names.set(position, editable.toString()));
