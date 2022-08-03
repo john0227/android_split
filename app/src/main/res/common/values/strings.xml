@@ -7,4 +7,6 @@
     <string name="et_hint_name">Add person</string>
     <string name="et_hint_amount">Amount to send</string>
     <string name="checkbox_override">Override</string>
+    <string name="sender">Sender</string>
+    <string name="receiver">Receiver</string>
 </resources>
