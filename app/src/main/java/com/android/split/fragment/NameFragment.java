@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ public class NameFragment extends Fragment {
     private Activity activity;
 
     private View rootLayout;
+    private NestedScrollView nsv_names;
     private RecyclerView rv_names;
     private Button btn_add_name;
 
@@ -63,6 +65,7 @@ public class NameFragment extends Fragment {
     }
 
     private void init() {
+        this.nsv_names = this.rootLayout.findViewById(R.id.nsv_names);
         this.rv_names = this.rootLayout.findViewById(R.id.rv_names);
         this.btn_add_name = this.rootLayout.findViewById(R.id.btn_add_name);
         this.nameRecyclerAdapter = new NameRecyclerAdapter(this.activity, this.names);
@@ -75,7 +78,10 @@ public class NameFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.rv_names.setLayoutManager(layoutManager);
 
-        this.btn_add_name.setOnClickListener(view -> NameFragment.this.nameRecyclerAdapter.addName());
+        this.btn_add_name.setOnClickListener(view -> {
+            this.nameRecyclerAdapter.addName();
+            this.nsv_names.post(() -> this.nsv_names.smoothScrollTo(0, this.nsv_names.getHeight()));
+        });
     }
 
 }

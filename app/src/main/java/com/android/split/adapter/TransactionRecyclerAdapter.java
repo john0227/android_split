@@ -101,7 +101,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
     private void populateSpinner(Activity activity, Spinner spinner) {
         List<String> items = new ArrayList<>(this.names);
-        items.add("Everyone");
+        items.add("All");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);

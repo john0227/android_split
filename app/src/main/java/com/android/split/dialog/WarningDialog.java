@@ -18,4 +18,17 @@ public class WarningDialog {
         builder.show();
     }
 
+    public static void show(Activity activity, String title, String msg,
+                            String pos, Runnable posAction, String neg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyDialogTheme);
+
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setPositiveButton(pos, ((dialog, which) -> posAction.run()));
+        builder.setNegativeButton(neg, (dialog, which) -> {});
+        builder.setCancelable(false);
+
+        builder.show();
+    }
+
 }

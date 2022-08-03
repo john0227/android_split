@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,7 @@ public class TransactionFragment extends Fragment {
     private Activity activity;
 
     private View rootLayout;
+    private NestedScrollView nsv_transactions;
     private RecyclerView rv_transactions;
     private Button btn_add_transaction;
 
@@ -65,6 +67,7 @@ public class TransactionFragment extends Fragment {
     }
 
     private void init() {
+        this.nsv_transactions = this.rootLayout.findViewById(R.id.nsv_transactions);
         this.rv_transactions = this.rootLayout.findViewById(R.id.rv_transactions);
         this.btn_add_transaction = this.rootLayout.findViewById(R.id.btn_add_transaction);
         this.transactionRecyclerAdapter = new TransactionRecyclerAdapter(this.activity, this.names, this.transactions);
@@ -77,7 +80,10 @@ public class TransactionFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         this.rv_transactions.setLayoutManager(layoutManager);
 
-        this.btn_add_transaction.setOnClickListener(view -> this.transactionRecyclerAdapter.addTransaction());
+        this.btn_add_transaction.setOnClickListener(view -> {
+            this.transactionRecyclerAdapter.addTransaction();
+            this.nsv_transactions.post(() -> this.nsv_transactions.smoothScrollTo(0, this.nsv_transactions.getHeight()));
+        });
     }
 
 

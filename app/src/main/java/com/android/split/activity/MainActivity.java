@@ -109,6 +109,15 @@ public class MainActivity extends AppCompatActivity {
         return nameSet.size() == this.names.size();
     }
 
+    private boolean isAnyEmptyName() {
+        for (String name : this.names) {
+            if (name.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean areAllValidTransactions() {
         for (TransactionMemberVo transaction : this.transactions) {
             if (transaction.getSender().equals(transaction.getRcver())) {
@@ -129,8 +138,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        this.logic.addPeople(this.names);
-        this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
+        Runnable moveNext = () -> {
+            this.logic.addPeople(this.names);
+            this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
+        };
+
+        if (isAnyEmptyName()) {
+            WarningDialog.show(this, "There is an empty name", "Would you like to continue?", "Continue", moveNext, "Go Back");
+        }
+
+        moveNext.run();
     };
 
     private final View.OnClickListener nextListener2 = view -> {
