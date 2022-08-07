@@ -1,6 +1,5 @@
 package com.android.split.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,13 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.android.library.log.LogService;
 import com.android.split.R;
@@ -29,16 +27,17 @@ import com.android.split.vo.TransactionMemberVo;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ResultFragment extends Fragment {
 
-    private Activity activity;
+    private FragmentActivity activity;
 
     private View rootLayout;
     private LinearLayout startTable_container;
-    private LinearLayout startNetIncome_container;
+    private LinearLayout startNetExpense_container;
     private LinearLayout afterTable_container;
-    private LinearLayout afterNetIncome_container;
+    private LinearLayout afterNetExpense_container;
 
     private Logic logic;
 
@@ -76,9 +75,9 @@ public class ResultFragment extends Fragment {
 
     private void init() {
         this.startTable_container = this.rootLayout.findViewById(R.id.startTable_container);
-        this.startNetIncome_container = this.rootLayout.findViewById(R.id.startNetIncome_container);
+        this.startNetExpense_container = this.rootLayout.findViewById(R.id.startNetExpense_container);
         this.afterTable_container = this.rootLayout.findViewById(R.id.afterTable_container);
-        this.afterNetIncome_container = this.rootLayout.findViewById(R.id.afterNetIncome_container);
+        this.afterNetExpense_container = this.rootLayout.findViewById(R.id.afterNetExpense_container);
 
         this.logic = Logic.getInstance();
     }
@@ -86,18 +85,18 @@ public class ResultFragment extends Fragment {
     public void onLoad() {
         // Show before simplifying
         createTransferTable(logic.getTransferTable(), this.startTable_container);
+        createNetExpenseTable(logic.getTransferTable(), this.startNetExpense_container);
 
         // Show after simplifying
         logic.simplify();
         createTransferTable(logic.getTransferTable(), this.afterTable_container);
+        createNetExpenseTable(logic.getTransferTable(), this.afterNetExpense_container);
     }
 
     private void createTransferTable(double[][] transferTable, LinearLayout tableContainer) {
         ZoomLayout zoomLayout = createZoomLayout((int) ConvertUnitUtil.convertDpToPx(this.activity, 80) * transferTable.length + 100);
         ConstraintLayout container = (ConstraintLayout) LayoutInflater.from(this.activity).inflate(R.layout.tablelayout, zoomLayout, false);
         LinearLayout tableLayout = container.findViewById(R.id.tablelayout);
-        tableLayout.removeAllViews();
-        tableContainer.removeAllViews();
 
         TextView tvSender = createTextView(R.string.sender, -90f, null, android.R.color.transparent,
                 Gravity.CENTER|Gravity.BOTTOM, 14, -1, Typeface.BOLD);
@@ -107,10 +106,10 @@ public class ResultFragment extends Fragment {
         container.addView(tvRcver);
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(container);
-        constraintSet.connect(tvSender.getId(), ConstraintSet.RIGHT, tableLayout.getId(), ConstraintSet.LEFT);
+        constraintSet.connect(tvSender.getId(), ConstraintSet.RIGHT, tableLayout.getId(), ConstraintSet.LEFT, 3);
         constraintSet.connect(tvSender.getId(), ConstraintSet.TOP, tableLayout.getId(), ConstraintSet.TOP);
-        constraintSet.connect(tvSender.getId(), ConstraintSet.BOTTOM, tableLayout.getId(), ConstraintSet.BOTTOM, 5);
-        constraintSet.connect(tvRcver.getId(), ConstraintSet.BOTTOM, tableLayout.getId(), ConstraintSet.TOP, 5);
+        constraintSet.connect(tvSender.getId(), ConstraintSet.BOTTOM, tableLayout.getId(), ConstraintSet.BOTTOM);
+        constraintSet.connect(tvRcver.getId(), ConstraintSet.BOTTOM, tableLayout.getId(), ConstraintSet.TOP, -15);
         constraintSet.connect(tvRcver.getId(), ConstraintSet.LEFT, tableLayout.getId(), ConstraintSet.LEFT);
         constraintSet.connect(tvRcver.getId(), ConstraintSet.RIGHT, tableLayout.getId(), ConstraintSet.RIGHT);
         constraintSet.applyTo(container);
@@ -118,8 +117,8 @@ public class ResultFragment extends Fragment {
         zoomLayout.addView(container);
         tableContainer.addView(zoomLayout);
 
-        // width = length of one cell * total number of cells
-        int width = (this.logic.getLongest() * 15) * transferTable.length;
+        // width = (length of one cell + padding) * total number of cells
+        int width = (this.logic.getLongest() * 20 + 2 * 30) * transferTable.length;  // in DP
         // Create LinearLayoutParam to be used
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 (int) ConvertUnitUtil.convertDpToPx(this.activity, width),
@@ -155,9 +154,57 @@ public class ResultFragment extends Fragment {
         }
     }
 
+    private void createNetExpenseTable(double[][] transferTable, LinearLayout tableContainer) {
+        // width = length of one cell * total number of cells
+        int width1 = (int) ConvertUnitUtil.convertDpToPx(this.activity, Math.max(this.logic.getLongestName(), 4) * 30);  // in PX
+        // Create LinearLayoutParam to be used by the header row
+        LinearLayout tableLayout = new LinearLayout(this.activity);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) ConvertUnitUtil.convertDpToPx(this.activity, 80)
+        );
+        tableLayout.setLayoutParams(layoutParams);
+        // Create header
+        LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(width1, LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams cellParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        TextView tvHeader;
+        for (int i = 0; i < 2; i++) {
+            tvHeader = createTextView(i == 0 ? "Name" : "Net Expenses", 0, i == 0 ? nameParams : cellParams,
+                    R.drawable.border, Gravity.CENTER, 14, -1, Typeface.BOLD);
+            tableLayout.addView(tvHeader);
+        }
+        tableContainer.addView(tableLayout);
+        // Create rest of the table
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) ConvertUnitUtil.convertDpToPx(this.activity, 200)
+        );
+        TextView tvCell;
+        for (int i = 0; i < this.names.size(); i++) {
+            tableLayout = new LinearLayout(this.activity);
+            tableLayout.setLayoutParams(layoutParams);
+            String grossExpense = DecimalFormatUtil.format(transferTable[i][this.names.size()]);
+            String grossIncome = DecimalFormatUtil.format(transferTable[this.names.size()][i]);
+            double netExpense = transferTable[i][this.names.size()] - transferTable[this.names.size()][i];
+            for (int j = 0; j < 2; j++) {
+                String text = j == 0
+                        ? this.names.get(i)
+                        : netExpense > 0
+                            ? String.format(Locale.US, "Must send %s\nMust receive %s\nIn total, must send %s",
+                                            grossExpense, grossIncome, DecimalFormatUtil.format(netExpense))
+                            : String.format(Locale.US, "Must send %s\nMust receive %s\nIn total, must receive %s",
+                                            grossExpense, grossIncome, DecimalFormatUtil.format(Math.abs(netExpense)));
+                tvCell = createTextView(text, 0, j == 0 ? nameParams : cellParams, R.drawable.border,
+                                        Gravity.CENTER, 14, R.color.purple_700, Typeface.NORMAL);
+                tableLayout.addView(tvCell);
+            }
+            tableContainer.addView(tableLayout);
+        }
+    }
+
     private ZoomLayout createZoomLayout(int height) {
         ZoomLayout zoomLayout = new ZoomLayout(this.activity);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height);
+        ZoomLayout.LayoutParams layoutParams = new ZoomLayout.LayoutParams(ZoomLayout.LayoutParams.MATCH_PARENT, height);
         layoutParams.setMargins(0, 30, 0, 20);
         zoomLayout.setLayoutParams(layoutParams);
         zoomLayout.setHorizontalScrollBarEnabled(true);

@@ -107,7 +107,7 @@ public class Logic {
 			}
 		} while (hasSimplified);
 
-		int totalSend, totalRcv;
+		double totalSend, totalRcv;
 		for (int i = 0; i < this.numPeople; i++) {
 			totalSend = 0;
 			totalRcv = 0;
@@ -133,33 +133,44 @@ public class Logic {
 		numTransfers[0] = this.transferTable[senderIndex][rcverIndex] == 0 ? numTransfers[0] - 1 : numTransfers[0];
 	}
 
-	private void simplify(int senderIndex, int rcverIndex, int auxilliary, int[] numTransfers) {
+	private void simplify(int senderIndex, int rcverIndex, int auxiliary, int[] numTransfers) {
 		// Cancel out the transfers
-		if (this.transferTable[auxilliary][rcverIndex] > this.transferTable[senderIndex][auxilliary]) {
-			this.transferTable[senderIndex][rcverIndex] += this.transferTable[senderIndex][auxilliary];
-			this.transferTable[auxilliary][rcverIndex] -= this.transferTable[senderIndex][auxilliary];
-			this.transferTable[senderIndex][auxilliary] = 0;
+		if (this.transferTable[auxiliary][rcverIndex] > this.transferTable[senderIndex][auxiliary]) {
+			this.transferTable[senderIndex][rcverIndex] += this.transferTable[senderIndex][auxiliary];
+			this.transferTable[auxiliary][rcverIndex] -= this.transferTable[senderIndex][auxiliary];
+			this.transferTable[senderIndex][auxiliary] = 0;
 		} else {
-			this.transferTable[senderIndex][auxilliary] += this.transferTable[senderIndex][rcverIndex];
-			this.transferTable[auxilliary][rcverIndex] += this.transferTable[senderIndex][rcverIndex];
+			this.transferTable[senderIndex][auxiliary] += this.transferTable[senderIndex][rcverIndex];
+			this.transferTable[auxiliary][rcverIndex] += this.transferTable[senderIndex][rcverIndex];
 			this.transferTable[senderIndex][rcverIndex] = 0;
 		}
 		// Update numTransfers
 		numTransfers[0] = this.transferTable[senderIndex][rcverIndex] == 0 ? numTransfers[0] - 1 : numTransfers[0];
-		numTransfers[0] = this.transferTable[senderIndex][auxilliary] == 0 ? numTransfers[0] - 1 : numTransfers[0];
+		numTransfers[0] = this.transferTable[senderIndex][auxiliary] == 0 ? numTransfers[0] - 1 : numTransfers[0];
 	}
 
-	public int getLongest() {
+	public int getLongestName() {
+		int longest = Integer.MIN_VALUE;
+		for (String name : this.nameToIndex.keySet()) {
+			if (!name.equals("All")) {
+				longest = Math.max(longest, name.length());
+			}
+		}
+		return longest;
+	}
+
+	public int getLongestAmount() {
 		int longest = Integer.MIN_VALUE;
 		for (double[] transfers : this.transferTable) {
 			for (double transfer : transfers) {
 				longest = Math.max(longest, DecimalFormatUtil.format(transfer).length());
 			}
 		}
-		for (String name : this.nameToIndex.keySet()) {
-			longest = Math.max(longest, name.length());
-		}
 		return longest;
+	}
+
+	public int getLongest() {
+		return Math.max(getLongestName(), getLongestAmount());
 	}
 
 	public double[][] getTransferTable() {

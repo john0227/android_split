@@ -164,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
             WarningDialog.show(this, "Something went wrong", "Please try again", "Ok");
             return;
         }
+
+//        getSupportFragmentManager().beginTransaction().detach(this.resultFragment).attach(this.resultFragment).commit();
         this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
         this.resultFragment.onLoad();
     };
