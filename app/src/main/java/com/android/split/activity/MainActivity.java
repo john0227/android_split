@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
         this.btn_back = findViewById(R.id.btn_back);
         this.btn_next = findViewById(R.id.btn_next);
         this.listeners = new View.OnClickListener[] {
-                this.nextListener1,
-                this.nextListener2,
+                this.namesToTransactionListener,
+                this.transactionToResultListener,
                 null
         };
 
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         return nameSet.size() == this.names.size();
     }
 
-    private boolean isAnyEmptyName() {
+    private boolean existsEmptyName() {
         for (String name : this.names) {
             if (name.isEmpty()) {
                 return true;
@@ -127,7 +127,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private final View.OnClickListener nextListener1 = view -> {
+    private boolean existsPositiveTransactions() {
+        int validCount = 0;
+        for (TransactionMemberVo transaction : this.transactions) {
+            if (transaction.getAmount() > 0.0) {
+                validCount++;
+            }
+        }
+        return validCount > 0;
+    }
+
+    private final View.OnClickListener namesToTransactionListener = view -> {
         if (this.names.size() < 2) {
             WarningDialog.show(this, "Need more people", "There must be at least two people", "Fix");
             return;
@@ -143,16 +153,21 @@ public class MainActivity extends AppCompatActivity {
             this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
         };
 
-        if (isAnyEmptyName()) {
+        if (existsEmptyName()) {
             WarningDialog.show(this, "There is an empty name", "Would you like to continue?", "Continue", moveNext, "Go Back");
         }
 
         moveNext.run();
     };
 
-    private final View.OnClickListener nextListener2 = view -> {
+    private final View.OnClickListener transactionToResultListener = view -> {
         if (!areAllValidTransactions()) {
             WarningDialog.show(this, "Invalid transactions", "Sender and receiver must be different", "Fix");
+            return;
+        }
+
+        if (!existsPositiveTransactions()) {
+            WarningDialog.show(this, "No transactions", "There are no transactions to simplify", "Fix");
             return;
         }
 
