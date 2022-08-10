@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +16,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.library.log.LogService;
 import com.android.split.R;
+import com.android.split.adapter.ResultRecyclerAdapter;
 import com.android.split.logic.Logic;
 import com.android.split.util.ConvertUnitUtil;
 import com.android.split.util.DecimalFormatUtil;
@@ -38,8 +40,10 @@ public class ResultFragment extends Fragment {
     private LinearLayout startNetExpense_container;
     private LinearLayout afterTable_container;
     private LinearLayout afterNetExpense_container;
+    private RecyclerView rv_simplified_transfers;
 
     private Logic logic;
+    private ResultRecyclerAdapter resultRecyclerAdapter;
 
     private final List<String> names;
     private final List<TransactionMemberVo> transactions;
@@ -66,6 +70,7 @@ public class ResultFragment extends Fragment {
         try {
             this.rootLayout = inflater.inflate(R.layout.fragment_result, container, false);
             init();
+            setting();
         } catch (Exception e) {
             LogService.error(this.activity, e.getMessage(), e);
         }
@@ -78,22 +83,34 @@ public class ResultFragment extends Fragment {
         this.startNetExpense_container = this.rootLayout.findViewById(R.id.startNetExpense_container);
         this.afterTable_container = this.rootLayout.findViewById(R.id.afterTable_container);
         this.afterNetExpense_container = this.rootLayout.findViewById(R.id.afterNetExpense_container);
+        this.rv_simplified_transfers = this.rootLayout.findViewById(R.id.rv_simplified_transfers);
 
         this.logic = Logic.getInstance();
     }
 
+    private void setting() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.activity);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        this.rv_simplified_transfers.setLayoutManager(layoutManager);
+    }
+
     public void onLoad() {
         // Show before simplifying
-        createTransferTable(logic.getTransferTable(), this.startTable_container);
-        createNetExpenseTable(logic.getTransferTable(), this.startNetExpense_container);
+        showTransferTable(logic.getTransferTable(), this.startTable_container);
+        showNetExpenseTable(logic.getTransferTable(), this.startNetExpense_container);
 
         // Show after simplifying
         logic.simplify();
-        createTransferTable(logic.getTransferTable(), this.afterTable_container);
-        createNetExpenseTable(logic.getTransferTable(), this.afterNetExpense_container);
+        showTransferTable(logic.getTransferTable(), this.afterTable_container);
+        showNetExpenseTable(logic.getTransferTable(), this.afterNetExpense_container);
+
+        // Show simplified transfers
+        this.resultRecyclerAdapter = new ResultRecyclerAdapter(this.activity, this.logic.getTransactions());
+        this.rv_simplified_transfers.setAdapter(this.resultRecyclerAdapter);
+//        this.resultRecyclerAdapter.notifyDataSetChanged();
     }
 
-    private void createTransferTable(double[][] transferTable, LinearLayout tableContainer) {
+    private void showTransferTable(double[][] transferTable, LinearLayout tableContainer) {
         ZoomLayout zoomLayout = createZoomLayout((int) ConvertUnitUtil.convertDpToPx(this.activity, 80) * transferTable.length + 100);
         ConstraintLayout container = (ConstraintLayout) LayoutInflater.from(this.activity).inflate(R.layout.tablelayout, zoomLayout, false);
         LinearLayout tableLayout = container.findViewById(R.id.tablelayout);
@@ -154,7 +171,7 @@ public class ResultFragment extends Fragment {
         }
     }
 
-    private void createNetExpenseTable(double[][] transferTable, LinearLayout tableContainer) {
+    private void showNetExpenseTable(double[][] transferTable, LinearLayout tableContainer) {
         // width = length of one cell * total number of cells
         int width1 = (int) ConvertUnitUtil.convertDpToPx(this.activity, Math.max(this.logic.getLongestName(), 4) * 30);  // in PX
         // Create LinearLayoutParam to be used by the header row

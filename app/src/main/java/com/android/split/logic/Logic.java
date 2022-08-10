@@ -1,7 +1,9 @@
 package com.android.split.logic;
 
 import com.android.split.util.DecimalFormatUtil;
+import com.android.split.vo.TransactionMemberVo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +179,23 @@ public class Logic {
 		return this.transferTable;
 	}
 
+	public List<TransactionMemberVo> getTransactions() {
+		List<TransactionMemberVo> transactions = new ArrayList<>();
+		for (int s = 0; s < this.transferTable.length - 1; s++) {
+			for (int r = 0; r < this.transferTable[s].length - 1; r++) {
+				if (this.transferTable[s][r] > 0.0) {
+					transactions.add(new TransactionMemberVo(getName(s), getName(r), this.transferTable[s][r], false));
+				}
+			}
+		}
+
+		if (transactions.isEmpty()) {
+			transactions.add(null);
+		}
+
+		return transactions;
+	}
+
 	// For testing purposes
 	public void printTable() {
 		int longest = Integer.MIN_VALUE;
@@ -199,6 +218,15 @@ public class Logic {
 	private int getNameIndex(String name) {
 		Integer integer = this.nameToIndex.get(name);
 		return integer != null ? integer : -1;
+	}
+
+	private String getName(int index) {
+		for (String name : this.nameToIndex.keySet()) {
+			if (this.nameToIndex.get(name) == index) {
+				return name;
+			}
+		}
+		return null;
 	}
 
 	private void setAmount(int senderIndex, int rcverIndex, double amount, boolean replace) {
