@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.split.R;
-import com.android.split.logic.Logic;
 import com.android.split.util.DecimalFormatUtil;
 import com.android.split.vo.TransactionMemberVo;
 
@@ -50,7 +49,6 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
         }
 
         // Bind tv_sender_name
-        // width = length of one cell + padding
         holder.tv_sender_name.setText(transaction.getSender());
 
         // Bind tv_rcver_name

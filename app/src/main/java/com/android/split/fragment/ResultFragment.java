@@ -107,7 +107,6 @@ public class ResultFragment extends Fragment {
         // Show simplified transfers
         this.resultRecyclerAdapter = new ResultRecyclerAdapter(this.activity, this.logic.getTransactions());
         this.rv_simplified_transfers.setAdapter(this.resultRecyclerAdapter);
-//        this.resultRecyclerAdapter.notifyDataSetChanged();
     }
 
     private void showTransferTable(double[][] transferTable, LinearLayout tableContainer) {
@@ -172,8 +171,8 @@ public class ResultFragment extends Fragment {
     }
 
     private void showNetExpenseTable(double[][] transferTable, LinearLayout tableContainer) {
-        // width = length of one cell * total number of cells
-        int width1 = (int) ConvertUnitUtil.convertDpToPx(this.activity, Math.max(this.logic.getLongestName(), 4) * 30);  // in PX
+        //width = (length of one cell + padding) * total number of cells
+        int width1 = (int) ConvertUnitUtil.convertDpToPx(this.activity, Math.max(this.logic.getLongestName(), 4) * 20 + 2 * 30);  // in PX
         // Create LinearLayoutParam to be used by the header row
         LinearLayout tableLayout = new LinearLayout(this.activity);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
