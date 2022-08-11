@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.library.log.LogService;
@@ -14,6 +13,7 @@ import com.android.split.adapter.MyPagerAdapter;
 import com.android.split.dialog.WarningDialog;
 import com.android.split.fragment.NameFragment;
 import com.android.split.fragment.ResultFragment;
+import com.android.split.fragment.SplitFragment;
 import com.android.split.fragment.TransactionFragment;
 import com.android.split.logic.Logic;
 import com.android.split.vo.TransactionMemberVo;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_next;
     private View.OnClickListener[] listeners;
 
-    private Fragment[] fragments;
+    private SplitFragment[] fragments;
     private NameFragment nameFragment;
     private TransactionFragment transactionFragment;
     private ResultFragment resultFragment;
@@ -65,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
         this.listeners = new View.OnClickListener[] {
                 this.namesToTransactionListener,
                 this.transactionToResultListener,
-                null
+                this.newTransactionsListener
         };
 
         this.nameFragment = new NameFragment(this.names);
         this.transactionFragment = new TransactionFragment(this.names, this.transactions);
         this.resultFragment = new ResultFragment(this.names, this.transactions);
-        this.fragments = new Fragment[] {
+        this.fragments = new SplitFragment[] {
                 this.nameFragment,
                 this.transactionFragment,
                 this.resultFragment
@@ -88,15 +88,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 setEnabled(btn_back, position > 0);
-                setEnabled(btn_next, position < 2);
-                btn_next.setText(position != 1
-                        ? R.string.btn_next_text1
-                        : R.string.btn_next_text2
-                );
+                btn_next.setText(switch (position) {
+                    case NameFragment.PAGE_NUM -> R.string.btn_next_text1;
+                    case TransactionFragment.PAGE_NUM -> R.string.btn_next_text2;
+                    default -> R.string.btn_next_text3;
+                });
                 btn_next.setOnClickListener(listeners[position]);
+                fragments[position].onLoad();
             }
         });
-        this.btn_back.setOnClickListener(view -> this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() - 1));
+        this.btn_back.setOnClickListener(view -> {
+            int index = this.vp2_split.getCurrentItem() - 1;
+            this.vp2_split.setCurrentItem(index);
+        });
     }
 
     private void setEnabled(Button button, boolean enabled) {
@@ -137,6 +141,16 @@ public class MainActivity extends AppCompatActivity {
         return validCount > 0;
     }
 
+    private void refresh() {
+        // Refresh MainActivity
+        this.logic.refreshLogic();
+        // Refresh Fragments in ViewPager2
+        for (SplitFragment fragment : this.fragments) {
+            fragment.refresh();
+        }
+        this.vp2_split.setCurrentItem(NameFragment.PAGE_NUM, true);
+    }
+
     private final View.OnClickListener namesToTransactionListener = view -> {
         if (this.names.size() < 2) {
             WarningDialog.show(this, "Need more people", "There must be at least two people", "Fix");
@@ -150,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         Runnable moveNext = () -> {
             this.logic.addPeople(this.names);
-            this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
+            this.vp2_split.setCurrentItem(TransactionFragment.PAGE_NUM);
         };
 
         if (existsEmptyName()) {
@@ -172,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
+            this.logic.clearTransfers();
             for (TransactionMemberVo transaction : this.transactions) {
                 this.logic.addTransfer(transaction.getSender(), transaction.getRcver(), transaction.getAmount(), transaction.shouldReplace());
             }
@@ -180,9 +195,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-//        getSupportFragmentManager().beginTransaction().detach(this.resultFragment).attach(this.resultFragment).commit();
-        this.vp2_split.setCurrentItem(this.vp2_split.getCurrentItem() + 1);
-        this.resultFragment.onLoad();
+        this.vp2_split.setCurrentItem(ResultFragment.PAGE_NUM);
+    };
+
+    private final View.OnClickListener newTransactionsListener = view -> {
+        refresh();
     };
 
 }

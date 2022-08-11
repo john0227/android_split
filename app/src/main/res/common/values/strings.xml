@@ -3,6 +3,7 @@
     <string name="btn_back">BACK</string>
     <string name="btn_next_text1">NEXT</string>
     <string name="btn_next_text2">SIMPLIFY</string>
+    <string name="btn_next_text3">NEW</string>
     <string name="btn_add">ADD</string>
     <string name="et_hint_name">Add person</string>
     <string name="et_hint_amount">Amount to send</string>

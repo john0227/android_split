@@ -11,7 +11,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,7 +20,9 @@ import com.android.split.adapter.NameRecyclerAdapter;
 
 import java.util.List;
 
-public class NameFragment extends Fragment {
+public class NameFragment extends SplitFragment {
+
+    public static final int PAGE_NUM = 0;
 
     private Activity activity;
 
@@ -64,6 +65,21 @@ public class NameFragment extends Fragment {
         return this.rootLayout;
     }
 
+    @Override
+    public void onLoad() {
+        // Scroll to top
+        this.scrollTo(0, false);
+        // Populate RecyclerView if list is empty
+        if (this.nameRecyclerAdapter != null && this.names.isEmpty()) {
+            this.nameRecyclerAdapter.addName();
+        }
+    }
+
+    @Override
+    public void refresh() {
+        this.nameRecyclerAdapter.removeAllNames();
+    }
+
     private void init() {
         this.nsv_names = this.rootLayout.findViewById(R.id.nsv_names);
         this.rv_names = this.rootLayout.findViewById(R.id.rv_names);
@@ -80,7 +96,21 @@ public class NameFragment extends Fragment {
 
         this.btn_add_name.setOnClickListener(view -> {
             this.nameRecyclerAdapter.addName();
-            this.nsv_names.post(() -> this.nsv_names.smoothScrollTo(0, this.nsv_names.getHeight()));
+            this.scrollTo(this.nsv_names.getHeight(), true);  // scroll to bottom
+        });
+    }
+
+    private void scrollTo(int height, boolean smoothScroll) {
+        if (this.nsv_names == null) {
+            return;
+        }
+
+        this.nsv_names.post(() -> {
+            if (smoothScroll) {
+                this.nsv_names.smoothScrollTo(0, height);
+            } else {
+                this.nsv_names.scrollTo(0, height);
+            }
         });
     }
 

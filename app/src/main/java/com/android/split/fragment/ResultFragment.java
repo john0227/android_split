@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.fragment.app.Fragment;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,11 +31,16 @@ import com.otaliastudios.zoom.ZoomLayout;
 import java.util.List;
 import java.util.Locale;
 
-public class ResultFragment extends Fragment {
+public class ResultFragment extends SplitFragment {
+
+    public static final int PAGE_NUM = 2;
+    private static final int START_TABLE_CHILD_ID = 100;
+    private static final int AFTER_TABLE_CHILD_ID = 101;
 
     private FragmentActivity activity;
 
     private View rootLayout;
+    private NestedScrollView nsv_result_fragment;
     private LinearLayout startTable_container;
     private LinearLayout startNetExpense_container;
     private LinearLayout afterTable_container;
@@ -78,7 +83,44 @@ public class ResultFragment extends Fragment {
         return this.rootLayout;
     }
 
+    @Override
+    public void onLoad() {
+        try {
+            refresh();
+            scrollToTop();
+
+            // Show before simplifying
+            showTransferTable(logic.getTransferTable(), this.startTable_container, START_TABLE_CHILD_ID);
+            showNetExpenseTable(logic.getTransferTable(), this.startNetExpense_container);
+
+            // Show after simplifying
+            logic.simplify();
+            showTransferTable(logic.getTransferTable(), this.afterTable_container, AFTER_TABLE_CHILD_ID);
+            showNetExpenseTable(logic.getTransferTable(), this.afterNetExpense_container);
+
+            // Show simplified transfers
+            this.resultRecyclerAdapter = new ResultRecyclerAdapter(this.activity, this.logic.getTransactions());
+            this.rv_simplified_transfers.setAdapter(this.resultRecyclerAdapter);
+        } catch (Exception e) {
+            LogService.error(this.activity, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void refresh() {
+        // Refresh view
+        if (this.startTable_container.findViewById(START_TABLE_CHILD_ID) != null) {
+            this.startTable_container.removeView(this.startTable_container.findViewById(START_TABLE_CHILD_ID));
+        }
+        this.startNetExpense_container.removeAllViews();
+        if (this.afterTable_container.findViewById(AFTER_TABLE_CHILD_ID) != null) {
+            this.afterTable_container.removeView(this.afterTable_container.findViewById(AFTER_TABLE_CHILD_ID));
+        }
+        this.afterNetExpense_container.removeAllViews();
+    }
+
     private void init() {
+        this.nsv_result_fragment = this.rootLayout.findViewById(R.id.nsv_result_fragment);
         this.startTable_container = this.rootLayout.findViewById(R.id.startTable_container);
         this.startNetExpense_container = this.rootLayout.findViewById(R.id.startNetExpense_container);
         this.afterTable_container = this.rootLayout.findViewById(R.id.afterTable_container);
@@ -94,23 +136,16 @@ public class ResultFragment extends Fragment {
         this.rv_simplified_transfers.setLayoutManager(layoutManager);
     }
 
-    public void onLoad() {
-        // Show before simplifying
-        showTransferTable(logic.getTransferTable(), this.startTable_container);
-        showNetExpenseTable(logic.getTransferTable(), this.startNetExpense_container);
-
-        // Show after simplifying
-        logic.simplify();
-        showTransferTable(logic.getTransferTable(), this.afterTable_container);
-        showNetExpenseTable(logic.getTransferTable(), this.afterNetExpense_container);
-
-        // Show simplified transfers
-        this.resultRecyclerAdapter = new ResultRecyclerAdapter(this.activity, this.logic.getTransactions());
-        this.rv_simplified_transfers.setAdapter(this.resultRecyclerAdapter);
+    private void scrollToTop() {
+        if (this.nsv_result_fragment == null) {
+            return;
+        }
+        this.nsv_result_fragment.post(() -> this.nsv_result_fragment.scrollTo(0, 0));
     }
 
-    private void showTransferTable(double[][] transferTable, LinearLayout tableContainer) {
+    private void showTransferTable(double[][] transferTable, LinearLayout tableContainer, int id) {
         ZoomLayout zoomLayout = createZoomLayout((int) ConvertUnitUtil.convertDpToPx(this.activity, 80) * transferTable.length + 100);
+        zoomLayout.setId(id);
         ConstraintLayout container = (ConstraintLayout) LayoutInflater.from(this.activity).inflate(R.layout.tablelayout, zoomLayout, false);
         LinearLayout tableLayout = container.findViewById(R.id.tablelayout);
 

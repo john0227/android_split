@@ -75,6 +75,14 @@ public class Logic {
 		this.setAmount(senderIndex, rcverIndex, amount, replace);
 	}
 
+	public void refreshLogic() {
+		logic = new Logic();
+	}
+
+	public void clearTransfers() {
+		this.transferTable = new double[this.numPeople + 1][this.numPeople + 1];
+	}
+
 	public void simplify() {
 		int[] numTransfers = new int[1];
 		boolean hasSimplified;

@@ -71,6 +71,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.sp_sender.setSelection(0);
         holder.sp_rcver.setSelection(1);
         // Set listener to EditText
+        holder.et_amount.getText().clear();
+        holder.et_amount.setHint(R.string.et_hint_amount);
         TextChangedListener textChangedListener = new TextChangedListener();
         textChangedListener.setOnTextChangedListener(editable -> {
             String strAmount = editable.toString();
@@ -97,6 +99,13 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     public void addTransaction() {
         this.transactions.add(new TransactionMemberVo("", "", 0.0, false));
         this.notifyItemInserted(this.transactions.size() - 1);
+    }
+
+    public void removeAllTransactions() {
+        while (!this.transactions.isEmpty()) {
+            this.transactions.remove(0);
+            this.notifyItemRemoved(0);
+        }
     }
 
     private void populateSpinner(Activity activity, Spinner spinner) {

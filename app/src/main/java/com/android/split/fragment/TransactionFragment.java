@@ -11,7 +11,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +21,9 @@ import com.android.split.vo.TransactionMemberVo;
 
 import java.util.List;
 
-public class TransactionFragment extends Fragment {
+public class TransactionFragment extends SplitFragment {
+
+    public static final int PAGE_NUM = 1;
 
     private Activity activity;
 
@@ -66,6 +67,21 @@ public class TransactionFragment extends Fragment {
         return this.rootLayout;
     }
 
+    @Override
+    public void onLoad() {
+        // Scroll to top
+        this.scrollTo(0, false);
+        // Populate RecyclerView if list is empty
+        if (this.transactionRecyclerAdapter != null && this.transactions.isEmpty()) {
+            this.transactionRecyclerAdapter.addTransaction();
+        }
+    }
+
+    @Override
+    public void refresh() {
+        this.transactionRecyclerAdapter.removeAllTransactions();
+    }
+
     private void init() {
         this.nsv_transactions = this.rootLayout.findViewById(R.id.nsv_transactions);
         this.rv_transactions = this.rootLayout.findViewById(R.id.rv_transactions);
@@ -82,9 +98,22 @@ public class TransactionFragment extends Fragment {
 
         this.btn_add_transaction.setOnClickListener(view -> {
             this.transactionRecyclerAdapter.addTransaction();
-            this.nsv_transactions.post(() -> this.nsv_transactions.smoothScrollTo(0, this.nsv_transactions.getHeight()));
+            this.scrollTo(this.nsv_transactions.getHeight(), true);  // scroll to bottom
         });
     }
 
+    private void scrollTo(int height, boolean smoothScroll) {
+        if (this.nsv_transactions == null) {
+            return;
+        }
+
+        this.nsv_transactions.post(() -> {
+            if (smoothScroll) {
+                this.nsv_transactions.smoothScrollTo(0, height);
+            } else {
+                this.nsv_transactions.scrollTo(0, height);
+            }
+        });
+    }
 
 }

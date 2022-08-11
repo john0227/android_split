@@ -39,8 +39,10 @@ public class NameRecyclerAdapter extends RecyclerView.Adapter<NameRecyclerAdapte
             holder.et_name.requestFocus();
         }
         // Update name if EditText field is changed
+        holder.et_name.getText().clear();
+        holder.et_name.setHint(R.string.et_hint_name);
         TextChangedListener textChangedListener = new TextChangedListener();
-        textChangedListener.setOnTextChangedListener(editable -> this.names.set(position, editable.toString()));
+        textChangedListener.setOnTextChangedListener(editable -> this.names.set(holder.getAdapterPosition(), editable.toString()));
         holder.et_name.addTextChangedListener(textChangedListener);
         // Remove name if ImageButton is pressed
         holder.ibtn_delete_name.setOnClickListener(view -> {
@@ -57,6 +59,13 @@ public class NameRecyclerAdapter extends RecyclerView.Adapter<NameRecyclerAdapte
     public void addName() {
         this.names.add("");
         this.notifyItemInserted(this.names.size() - 1);
+    }
+
+    public void removeAllNames() {
+        while (!this.names.isEmpty()) {
+            this.names.remove(0);
+            this.notifyItemRemoved(0);
+        }
     }
 
     public static class NameHolder extends RecyclerView.ViewHolder {
